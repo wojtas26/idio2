@@ -1,0 +1,40 @@
+<resources>
+    <string name="app_name">idio</string>
+    <string name="title_activity_main">MainActivity</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="title_activity_login">Přihlášení</string>
+    <string name="next">Další</string>
+    <string name="previous">Předchozí</string>
+    <string name="actual">Aktualní</string>
+    <string name="food_prompt" />
+    <string name="order" />
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="option_1">Docházka</string>
+    <string name="option_2">Stravování</string>
+    <string name="option_3">O aplikaci</string>
+    <string name="name">Přihlašovací jmeno</string>
+    <string name="pass">Heslo</string>
+
+
+
+    <string-array name="menu_items">
+        <item id="4">Jídelna Řeznictví</item>
+        <item id="2">Výdejna Dolní Sloupnice</item>
+        <item id="3">Výdejna Mechanizace</item>
+        <item id="1">Výdejna Němčice</item>
+        <item id="5">Výdejna Řetová</item>
+    </string-array>
+    <string-array name="days_of_week">
+        <item id="0">Pondělí</item>
+        <item id="1">Úterý</item>
+        <item id="2">Středa</item>
+        <item id="3">Čtvrtek</item>
+        <item id="4">Pátek</item>
+        <item id="5">Sobota</item>
+        <item id="6">Neděle</item>
+    </string-array>
+</resources>
