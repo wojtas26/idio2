@@ -1,57 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".FirstFragment">
 
     <LinearLayout
+        android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:orientation="vertical">
+
         <com.prolificinteractive.materialcalendarview.MaterialCalendarView
             android:id="@+id/calendarView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:mcv_showOtherDates="defaults"
-            app:mcv_selectionColor="#FFBB86FC"
+            app:mcv_calendarMode="month"
             app:mcv_firstDayOfWeek="monday"
+            app:mcv_selectionColor="#FFBB86FC"
+            app:mcv_showOtherDates="defaults"
             app:mcv_weekDayTextAppearance="@array/days_of_week"
-            app:mcv_calendarMode="month" />
-        <TextView
-            android:id="@+id/hwTimeInTxt"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Příchod: 2023-03-10 05:56:16" />
+            android:layout_height="wrap_content" />
 
-        <TextView
-            android:id="@+id/hwTimeOutTxt"
+        <LinearLayout
+            android:id="@+id/hw_time_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Odchod: 2023-03-10 15:28:01" />
-
-        <TextView
-            android:id="@+id/workShiftTxt"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Pracovní směna:Ranní ŽV " />
-
-        <TextView
-            android:id="@+id/workTxt"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Přítomnost: 9:25 " />
-
-        <TextView
-            android:id="@+id/breakTxt"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Přestávka: 0:30 " />
+            android:orientation="vertical">
+        </LinearLayout>
     </LinearLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>
+
+

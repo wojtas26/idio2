@@ -18,7 +18,7 @@
     <string name="option_3">O aplikaci</string>
     <string name="name">Přihlašovací jmeno</string>
     <string name="pass">Heslo</string>
-
+    <string name="autoLog">Automaticky se přihlásit</string>
 
 
     <string-array name="menu_items">

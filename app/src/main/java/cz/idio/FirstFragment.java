@@ -15,6 +15,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.HorizontalScrollView;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -63,10 +67,10 @@ public class FirstFragment extends Fragment {
     private TextView hwTimeInTxt;
     private TextView hwTimeOutTxt;
     private TextView workShiftTxt;
-    private TextView workTxt;
+    private TextView workTxt ;
     private TextView breakTxt;
     private com.prolificinteractive.materialcalendarview.MaterialCalendarView calendarView;
-
+    private LinearLayout hwTimeContainer;
     String hwTimeIn = "";
     String hwTimeOut = "";
     String workShiftName = "";
@@ -82,15 +86,27 @@ public class FirstFragment extends Fragment {
     @SuppressLint("ResourceType")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-        preferences = mContext.getSharedPreferences("data", Context.MODE_PRIVATE);
         binding = FragmentFirstBinding.inflate(inflater, container, false);
+      /*  // Vytvořte ScrollView a nastavte jeho parametry
+        ScrollView scrollView = new ScrollView(requireContext());
+        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.WRAP_CONTENT
+        );
+        scrollView.setLayoutParams(layoutParams);
+        // Odeberte váš kontejner z kořenového zobrazení (binding.getRoot()) a přidejte jej do ScrollView
+        ViewGroup parent = (ViewGroup) binding.container.getParent();
+        if (parent != null) {
+            parent.removeView(binding.container);
+        }
+        scrollView.addView(binding.container);
+
+        // Nastavte ScrollView jako hlavní zobrazení vaší aktivity
+        binding.getRoot().addView(scrollView);*/
+        preferences = mContext.getSharedPreferences("data", Context.MODE_PRIVATE);
         calendarView = binding.calendarView;
-        hwTimeInTxt = binding.hwTimeInTxt;
-        hwTimeOutTxt = binding.hwTimeOutTxt;
-        workShiftTxt = binding.workShiftTxt;
-        workTxt = binding.workTxt;
-        breakTxt = binding.breakTxt;
+        binding.getRoot().isScrollContainer();
+        hwTimeContainer = binding.hwTimeContainer;
         String mod = "WorkList";
         String cmd = "GetPerson";
         String complogin = " ";
@@ -127,9 +143,60 @@ public class FirstFragment extends Fragment {
 
         ColorTextDayDecorator sundayDecorator = new ColorTextDayDecorator(ContextCompat.getColor(mContext.getApplicationContext(), R.color.red), sundays);
         calendarView.addDecorator(sundayDecorator);
+        Call<WorklistResponse> call = apiService.getWorklist(mod, cmd, complogin, login, pwd, id, dateday);
+        call.enqueue(new Callback<WorklistResponse>()
 
+        {
+            @Override
+            public void onResponse
+                    (Call < WorklistResponse > call, Response < WorklistResponse > response) {
+                WorklistResponse worklistResponse = response.body();
+                dayItems = worklistResponse.getDay();
+                Collection<CalendarDay> dates = new ArrayList<>();
+                Collection<CalendarDay> holidayDays = new ArrayList<>();
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 
+                if (dayItems != null) {
+                    for (DayItem dayItem : dayItems) {
+                        // Get the CalendarDay object from the DayItem object
+                        Date date;
+                        try {
+                            date = sdf.parse(dayItem.getDay());
+                            Calendar calendar = Calendar.getInstance();
+                            calendar.setTime(date);
+                            int year = calendar.get(Calendar.YEAR);
+                            int month = calendar.get(Calendar.MONTH) + 1; // Přidejte 1 k měsíci, aby byl založený na jedničkách
+                            int day = calendar.get(Calendar.DAY_OF_MONTH);
+                            isValidDate(year, month, day);
+                            CalendarDay calendarDay = CalendarDay.from(year, month, day);
 
+                            // Přidejte den do seznamu pouze pokud má nějaké hodnoty
+                            if (dayItem.getReg() != null && !dayItem.getReg().isEmpty() && dayItem.getReg().get(0).getRegistrationId() != 5) {
+                                dates.add(calendarDay);
+                            } else if (dayItem.getReg() != null && !dayItem.getReg().isEmpty() && dayItem.getReg().get(0).getRegistrationId() == 5) {
+                                holidayDays.add(calendarDay);
+                                if (dayItem.getTube() != null && dayItem.getTube().get(0).getNames().equals("Dovolená")) {
+                                    holidayDays.add(calendarDay);
+                                }
+                            } else if (dayItem.getWorkShiftId() == -1) {
+                                holidayDays.add(calendarDay);
+                            }
+                        } catch (ParseException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    EventDecorator decorator1 = new EventDecorator(ContextCompat.getColor(mContext.getApplicationContext(), R.color.purple_200), holidayDays);
+                    calendarView.addDecorator(decorator1);
+                    EventDecorator decorator = new EventDecorator(ContextCompat.getColor(mContext.getApplicationContext(), R.color.purple_700), dates);
+                    calendarView.addDecorator(decorator);
+
+                }
+            }
+            @Override
+            public void onFailure (Call < WorklistResponse > call, Throwable t){
+                Log.e(TAG, "Failed to get worklist for month: " + t.getMessage());
+            }
+        });
 
         calendarView.setOnMonthChangedListener(new OnMonthChangedListener() {
             @Override
@@ -191,7 +258,7 @@ public class FirstFragment extends Fragment {
 
             }
         });
-// Set a OnDateChangeListener for the CalendarView
+        // Set a OnDateChangeListener for the CalendarView
         calendarView.setOnDateChangedListener(new OnDateSelectedListener() {
             @Override
             public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
@@ -212,84 +279,70 @@ public class FirstFragment extends Fragment {
                 if (selectedDayItem != null) {
                     loadDataForDate(selectedDayItem);
 
-                } else {
-                    // Set the text views to display a message indicating that there is no data available for the selected date
-                    hwTimeInTxt.setText("No data available for this date");
-                    hwTimeOutTxt.setText("");
-                    workShiftTxt.setText("");
-                    workTxt.setText("");
-                    breakTxt.setText("");
                 }
             }
-
+            @SuppressLint("SetTextI18n")
             private void loadDataForDate(DayItem dayItem) {
                 calendarView.setDateTextAppearance(android.R.style.TextAppearance_Medium);
                 List<Reg> regList = dayItem.getReg();
+
+                List<String> hwTimeInList = new ArrayList<>();
+                List<String> hwTimeOutList = new ArrayList<>();
+
+                if (regList != null && !regList.isEmpty()) {
+                    for (Reg reg : regList) {
+                        hwTimeContainer.removeAllViews();
+                        if (reg.getRegistrationId() == 1) {
+                            hwTimeInList.add(reg.getHwTime());
+                        } else if (reg.getRegistrationId() == 2) {
+                            hwTimeOutList.add(reg.getHwTime());
+                        }
+                    }
+                }
+                hwTimeContainer.removeAllViews();
+                int maxLength = Math.max(hwTimeInList.size(), hwTimeOutList.size());
+                for (int i = 0; i < maxLength; i++) {
+                    if (i < hwTimeInList.size()) {
+                        hwTimeInTxt = new TextView(mContext);
+                        hwTimeInTxt.setText("Příchod " + (i + 1) + ": " + hwTimeInList.get(i));
+                        hwTimeContainer.addView(hwTimeInTxt);
+                    }
+
+                    if (i < hwTimeOutList.size()) {
+                        hwTimeOutTxt = new TextView(mContext);
+                        hwTimeOutTxt.setText("Odchod " + (i + 1) + ": " + hwTimeOutList.get(i));
+                        hwTimeContainer.addView(hwTimeOutTxt);
+                    }
+                }
+                workShiftName = dayItem.getWorkShiftName();
+                work = dayItem.getWork();
+                pause = 0;
+
                 if (dayItem.isRepair()) {
-                    hwTimeIn = regList.get(0).getHwTime();
-                    hwTimeOut = "";
-                    workShiftName = dayItem.getWorkShiftName();
-                    work = dayItem.getWork();
-                    if (dayItem.getTube().size() > 1) {
-                        pause = Integer.parseInt(String.valueOf(dayItem.getTube().get(1).getLen()));
-                    } else {
-                        work = dayItem.getWorkLen();
-                        pause = 0;
-                        workShiftName = dayItem.getTube().get(0).getNames();
+                    pause = (dayItem.getTube() != null && dayItem.getTube().size() > 1) ? Integer.parseInt(String.valueOf(dayItem.getTube().get(1).getLen())) : 0;
+                    if (pause == 0 && dayItem.getTube() != null && !dayItem.getTube().isEmpty()) {
+                       if(regList.get(0).getRegistrationId()==5) {
+                           workShiftName = dayItem.getTube().get(0).getNames();
+                       }
                     }
-                } else if (regList != null && !regList.isEmpty()) {
-                    hwTimeIn = regList.get(0).getHwTime();
-                    hwTimeOut = regList.get(1).getHwTime();
-                    workShiftName = dayItem.getWorkShiftName();
-                    work = dayItem.getWork();
-                    if (dayItem.getTube().size() > 1) {
-                        pause = Integer.parseInt(String.valueOf(dayItem.getTube().get(1).getLen()));
-                    } else {
-                        pause = 0;
-                    }
-                } else {
-                    hwTimeIn = "";
-                    hwTimeOut = "";
-                    workShiftName = "";
-                    work = 0;
-                    pause = 0;
+                } else if (dayItem.getTube() != null && dayItem.getTube().size() == 2) {
+                    pause = Integer.parseInt(String.valueOf(dayItem.getTube().get(1).getLen()));
                 }
-                hwTimeInTxt.setText("Příchod: " + hwTimeIn);
-                hwTimeOutTxt.setText("Odchod: " + hwTimeOut);
+                workShiftTxt = new TextView(mContext);
+                workTxt = new TextView(mContext);
+                breakTxt = new TextView(mContext);
                 workShiftTxt.setText("Pracovní směna: " + workShiftName);
-                workTxt.setText("Přítomnost: " + work / 60);
-                breakTxt.setText("Přestávka: " + pause);
+                hwTimeContainer.addView(workShiftTxt);
+                workTxt.setText("Přítomnost: " + work / 60 + " hod.");
+                hwTimeContainer.addView(workTxt);
+                breakTxt.setText("Přestávka: " + pause + " min.");
+                hwTimeContainer.addView(breakTxt);
                 Log.d(TAG, "Příchod: " + hwTimeIn + " Odchod: " + hwTimeOut + " Pracovní směna: " + workShiftName + " Přítomnost: " + work / 60 + " Přestávka: " + pause);
+
             }
         });
 
-        Call<WorklistResponse> call = apiService.getWorklist(mod, cmd, complogin, login, pwd, id, dateday);
-        call.enqueue(new Callback<WorklistResponse>()
 
-        {
-            @Override
-            public void onResponse
-                    (Call < WorklistResponse > call, Response < WorklistResponse > response){
-                WorklistResponse worklistResponse = response.body();
-                dayItems = worklistResponse.getDay();
-                for (DayItem dayItem : dayItems) {
-                    // Get the date in milliseconds from the DayItem object
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-                    Date date = null;
-                    try {
-                        date = sdf.parse(dayItem.getDay());
-                    } catch (ParseException e) {
-                        throw new RuntimeException(e);
-                    }
-
-                }
-            }
-
-            @Override
-            public void onFailure (Call < WorklistResponse > call, Throwable t){
-                Log.e(TAG, "Failed to get worklist for month: " + t.getMessage());
-            }
-        });
 
         return binding.getRoot();
     }
