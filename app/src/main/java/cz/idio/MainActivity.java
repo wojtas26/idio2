@@ -6,23 +6,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import androidx.appcompat.app.AppCompatActivity;
-import android.view.MenuItem;
-import android.view.View;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import cz.idio.api.TempDataHolder;
 import cz.idio.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
     private static final String PREFS_NAME = "data";
-    private static final String ACCESS_TOKEN_KEY = "pwdSha1";
     private AppBarConfiguration appBarConfiguration;
     private ActivityMainBinding binding;
 
@@ -85,4 +83,5 @@ public class MainActivity extends AppCompatActivity {
         return NavigationUI.navigateUp(navController, appBarConfiguration)
                 || super.onSupportNavigateUp();
     }
+
 }

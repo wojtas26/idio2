@@ -16,7 +16,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -29,17 +28,14 @@ import androidx.fragment.app.Fragment;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import android.icu.util.Calendar;
 
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
-import com.prolificinteractive.materialcalendarview.OnMonthChangedListener;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -49,9 +45,7 @@ import cz.idio.api.ApiClient;
 import cz.idio.api.ColorTextDayDecorator;
 import cz.idio.api.EventDecorator;
 import cz.idio.api.response.DayItem;
-import cz.idio.api.response.LoginResponse;
 import cz.idio.api.response.Reg;
-import cz.idio.api.response.Tube;
 import cz.idio.api.response.WorklistResponse;
 import cz.idio.databinding.FragmentFirstBinding;
 import cz.idio.model.ApiService;
@@ -63,7 +57,6 @@ public class FirstFragment extends Fragment {
 
     private FragmentFirstBinding binding;
     private Context mContext;
-    private SharedPreferences preferences;
     private TextView hwTimeInTxt;
     private TextView hwTimeOutTxt;
     private TextView workShiftTxt;
@@ -78,16 +71,16 @@ public class FirstFragment extends Fragment {
     double pause = 0;
     private List<DayItem> dayItems = new ArrayList<>();
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         mContext = context;
     }
 
     @SuppressLint("ResourceType")
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentFirstBinding.inflate(inflater, container, false);
-      /*  // Vytvořte ScrollView a nastavte jeho parametry
+        // Vytvořte ScrollView a nastavte jeho parametry
         ScrollView scrollView = new ScrollView(requireContext());
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.MATCH_PARENT,
@@ -102,8 +95,8 @@ public class FirstFragment extends Fragment {
         scrollView.addView(binding.container);
 
         // Nastavte ScrollView jako hlavní zobrazení vaší aktivity
-        binding.getRoot().addView(scrollView);*/
-        preferences = mContext.getSharedPreferences("data", Context.MODE_PRIVATE);
+        binding.getRoot().addView(scrollView);
+        SharedPreferences preferences = mContext.getSharedPreferences("data", Context.MODE_PRIVATE);
         calendarView = binding.calendarView;
         binding.getRoot().isScrollContainer();
         hwTimeContainer = binding.hwTimeContainer;
@@ -116,9 +109,8 @@ public class FirstFragment extends Fragment {
         int id = Integer.parseInt(preferences.getString("personId", ""));
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.DAY_OF_MONTH, 1);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        String formattedDate = sdf.format(calendar.getTime());
-        String dateday = formattedDate;
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String dateday = sdf.format(calendar.getTime());
        // Přidejte červenou barvu pro neděle
         Collection<CalendarDay> sundays = new ArrayList<>();
 
@@ -149,8 +141,9 @@ public class FirstFragment extends Fragment {
         {
             @Override
             public void onResponse
-                    (Call < WorklistResponse > call, Response < WorklistResponse > response) {
+                    (@NonNull Call < WorklistResponse > call, @NonNull Response < WorklistResponse > response) {
                 WorklistResponse worklistResponse = response.body();
+                assert worklistResponse != null;
                 dayItems = worklistResponse.getDay();
                 Collection<CalendarDay> dates = new ArrayList<>();
                 Collection<CalendarDay> holidayDays = new ArrayList<>();
@@ -193,70 +186,68 @@ public class FirstFragment extends Fragment {
                 }
             }
             @Override
-            public void onFailure (Call < WorklistResponse > call, Throwable t){
+            public void onFailure (@NonNull Call < WorklistResponse > call, @NonNull Throwable t){
                 Log.e(TAG, "Failed to get worklist for month: " + t.getMessage());
             }
         });
 
-        calendarView.setOnMonthChangedListener(new OnMonthChangedListener() {
-            @Override
-            public void onMonthChanged(MaterialCalendarView widget, CalendarDay date) {
-                Call<WorklistResponse> call = apiService.getWorklist(mod, cmd, complogin, login, pwd, id, date.getYear()+"-0"+date.getMonth()+"-01");
-                call.enqueue(new Callback<WorklistResponse>()
+        calendarView.setOnMonthChangedListener((widget, date) -> {
+            Call<WorklistResponse> call1 = apiService.getWorklist(mod, cmd, complogin, login, pwd, id, date.getYear()+"-0"+date.getMonth()+"-01");
+            call1.enqueue(new Callback<WorklistResponse>()
 
-                {
-                    @Override
-                    public void onResponse
-                            (Call < WorklistResponse > call, Response < WorklistResponse > response) {
-                        WorklistResponse worklistResponse = response.body();
-                        dayItems = worklistResponse.getDay();
-                        Collection<CalendarDay> dates = new ArrayList<>();
-                        Collection<CalendarDay> holidayDays = new ArrayList<>();
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            {
+                @Override
+                public void onResponse
+                        (@NonNull Call < WorklistResponse > call1, @NonNull Response < WorklistResponse > response) {
+                    WorklistResponse worklistResponse = response.body();
+                    assert worklistResponse != null;
+                    dayItems = worklistResponse.getDay();
+                    Collection<CalendarDay> dates = new ArrayList<>();
+                    Collection<CalendarDay> holidayDays = new ArrayList<>();
+                    SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 
-                        if (dayItems != null) {
-                            for (DayItem dayItem : dayItems) {
-                                // Get the CalendarDay object from the DayItem object
-                                Date date;
-                                try {
-                                    date = sdf.parse(dayItem.getDay());
-                                    Calendar calendar = Calendar.getInstance();
-                                    calendar.setTime(date);
-                                    int year = calendar.get(Calendar.YEAR);
-                                    int month = calendar.get(Calendar.MONTH) + 1; // Přidejte 1 k měsíci, aby byl založený na jedničkách
-                                    int day = calendar.get(Calendar.DAY_OF_MONTH);
-                                    isValidDate(year, month, day);
-                                    CalendarDay calendarDay = CalendarDay.from(year, month, day);
+                    if (dayItems != null) {
+                        for (DayItem dayItem : dayItems) {
+                            // Get the CalendarDay object from the DayItem object
+                            Date date;
+                            try {
+                                date = sdf1.parse(dayItem.getDay());
+                                Calendar calendar1 = Calendar.getInstance();
+                                calendar1.setTime(date);
+                                int year = calendar1.get(Calendar.YEAR);
+                                int month = calendar1.get(Calendar.MONTH) + 1; // Přidejte 1 k měsíci, aby byl založený na jedničkách
+                                int day = calendar1.get(Calendar.DAY_OF_MONTH);
+                                isValidDate(year, month, day);
+                                CalendarDay calendarDay = CalendarDay.from(year, month, day);
 
-                                    // Přidejte den do seznamu pouze pokud má nějaké hodnoty
-                                    if (dayItem.getReg() != null && !dayItem.getReg().isEmpty() && dayItem.getReg().get(0).getRegistrationId() != 5) {
-                                        dates.add(calendarDay);
-                                    } else if (dayItem.getReg() != null && !dayItem.getReg().isEmpty() && dayItem.getReg().get(0).getRegistrationId() == 5) {
-                                        holidayDays.add(calendarDay);
-                                        if (dayItem.getTube() != null && dayItem.getTube().get(0).getNames().equals("Dovolená")) {
-                                            holidayDays.add(calendarDay);
-                                        }
-                                    } else if (dayItem.getWorkShiftId() == -1) {
+                                // Přidejte den do seznamu pouze pokud má nějaké hodnoty
+                                if (dayItem.getReg() != null && !dayItem.getReg().isEmpty() && dayItem.getReg().get(0).getRegistrationId() != 5) {
+                                    dates.add(calendarDay);
+                                } else if (dayItem.getReg() != null && !dayItem.getReg().isEmpty() && dayItem.getReg().get(0).getRegistrationId() == 5) {
+                                    holidayDays.add(calendarDay);
+                                    if (dayItem.getTube() != null && dayItem.getTube().get(0).getNames().equals("Dovolená")) {
                                         holidayDays.add(calendarDay);
                                     }
-                                } catch (ParseException e) {
-                                    throw new RuntimeException(e);
+                                } else if (dayItem.getWorkShiftId() == -1) {
+                                    holidayDays.add(calendarDay);
                                 }
+                            } catch (ParseException e) {
+                                throw new RuntimeException(e);
                             }
-                            EventDecorator decorator1 = new EventDecorator(ContextCompat.getColor(mContext.getApplicationContext(), R.color.purple_200), holidayDays);
-                            calendarView.addDecorator(decorator1);
-                            EventDecorator decorator = new EventDecorator(ContextCompat.getColor(mContext.getApplicationContext(), R.color.purple_700), dates);
-                            calendarView.addDecorator(decorator);
-
                         }
-                    }
-                    @Override
-                    public void onFailure (Call < WorklistResponse > call, Throwable t){
-                        Log.e(TAG, "Failed to get worklist for month: " + t.getMessage());
-                    }
-                });
+                        EventDecorator decorator1 = new EventDecorator(ContextCompat.getColor(mContext.getApplicationContext(), R.color.purple_200), holidayDays);
+                        calendarView.addDecorator(decorator1);
+                        EventDecorator decorator = new EventDecorator(ContextCompat.getColor(mContext.getApplicationContext(), R.color.purple_700), dates);
+                        calendarView.addDecorator(decorator);
 
-            }
+                    }
+                }
+                @Override
+                public void onFailure (@NonNull Call < WorklistResponse > call1, @NonNull Throwable t){
+                    Log.e(TAG, "Failed to get worklist for month: " + t.getMessage());
+                }
+            });
+
         });
         // Set a OnDateChangeListener for the CalendarView
         calendarView.setOnDateChangedListener(new OnDateSelectedListener() {
@@ -321,7 +312,8 @@ public class FirstFragment extends Fragment {
                 if (dayItem.isRepair()) {
                     pause = (dayItem.getTube() != null && dayItem.getTube().size() > 1) ? Integer.parseInt(String.valueOf(dayItem.getTube().get(1).getLen())) : 0;
                     if (pause == 0 && dayItem.getTube() != null && !dayItem.getTube().isEmpty()) {
-                       if(regList.get(0).getRegistrationId()==5) {
+                        assert regList != null;
+                        if(regList.get(0).getRegistrationId()==5) {
                            workShiftName = dayItem.getTube().get(0).getNames();
                        }
                     }
