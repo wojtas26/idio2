@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -57,16 +58,19 @@ public class FirstFragment extends Fragment {
 
     private FragmentFirstBinding binding;
     private Context mContext;
-    private TextView hwTimeInTxt;
+    private TextView hwTimeInTxt,workHoursTextView;
     private TextView hwTimeOutTxt;
     private TextView workShiftTxt;
     private TextView workTxt ;
     private TextView breakTxt;
     private com.prolificinteractive.materialcalendarview.MaterialCalendarView calendarView;
     private LinearLayout hwTimeContainer;
+    private ProgressBar WorkProgress;
     String hwTimeIn = "";
     String hwTimeOut = "";
     String workShiftName = "";
+    double workLen;
+    double sumWork;
     double work = 0;
     double pause = 0;
     private List<DayItem> dayItems = new ArrayList<>();
@@ -80,7 +84,8 @@ public class FirstFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentFirstBinding.inflate(inflater, container, false);
-        // Vytvořte ScrollView a nastavte jeho parametry
+        requireActivity().setTitle(mContext.getString(R.string.title_first_fragment));
+      /*  // Vytvořte ScrollView a nastavte jeho parametry
         ScrollView scrollView = new ScrollView(requireContext());
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.MATCH_PARENT,
@@ -95,11 +100,13 @@ public class FirstFragment extends Fragment {
         scrollView.addView(binding.container);
 
         // Nastavte ScrollView jako hlavní zobrazení vaší aktivity
-        binding.getRoot().addView(scrollView);
+        binding.getRoot().addView(scrollView);*/
         SharedPreferences preferences = mContext.getSharedPreferences("data", Context.MODE_PRIVATE);
         calendarView = binding.calendarView;
         binding.getRoot().isScrollContainer();
         hwTimeContainer = binding.hwTimeContainer;
+        WorkProgress = binding.hoursProgressBar;
+        workHoursTextView = binding.workHoursTextView;
         String mod = "WorkList";
         String cmd = "GetPerson";
         String complogin = " ";
@@ -125,7 +132,7 @@ public class FirstFragment extends Fragment {
         while (startCalendar.before(endCalendar)) {
             if (startCalendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
                 int year = startCalendar.get(Calendar.YEAR);
-                int month = startCalendar.get(Calendar.MONTH) + 1; // Přidejte 1 k měsíci, aby byl založený na jedničkách
+                int month = startCalendar.get(Calendar.MONTH) + 1;
                 int day = startCalendar.get(Calendar.DAY_OF_MONTH);
                 CalendarDay calendarDay = CalendarDay.from(year, month, day);
                 sundays.add(calendarDay);
@@ -145,6 +152,11 @@ public class FirstFragment extends Fragment {
                 WorklistResponse worklistResponse = response.body();
                 assert worklistResponse != null;
                 dayItems = worklistResponse.getDay();
+                workLen = worklistResponse.getWorkLen()/60f;
+                sumWork = worklistResponse.getWork()/60f;
+                workHoursTextView.setText("Odpracované hodiny: " + sumWork + " / Pracovní fond: " + workLen);
+                WorkProgress.setMax((int) workLen);
+                WorkProgress.setProgress((int) sumWork);
                 Collection<CalendarDay> dates = new ArrayList<>();
                 Collection<CalendarDay> holidayDays = new ArrayList<>();
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
@@ -202,6 +214,11 @@ public class FirstFragment extends Fragment {
                     WorklistResponse worklistResponse = response.body();
                     assert worklistResponse != null;
                     dayItems = worklistResponse.getDay();
+                    workLen = worklistResponse.getWorkLen()/60f;
+                    sumWork = worklistResponse.getWork()/60f;
+                    workHoursTextView.setText("Odpracované hodiny: " + sumWork + " / Pracovní fond: " + workLen);
+                    WorkProgress.setMax((int) workLen);
+                    WorkProgress.setProgress((int) sumWork);
                     Collection<CalendarDay> dates = new ArrayList<>();
                     Collection<CalendarDay> holidayDays = new ArrayList<>();
                     SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());

@@ -12,12 +12,12 @@ public class WorklistResponse {
     private String workShift_Name;
     @SerializedName("HwTime")
     private String hwTime;
-    @SerializedName("Work")
-    private String work;
+    @SerializedName("WorkLen")
+    private int workLen;
     @SerializedName("Len")
     private String pause;
-   // @SerializedName("Day")
-    private String days;
+    @SerializedName("Work")
+    private int work;
 
     public void setDay(List<DayItem> day) {
         this.day = day;
@@ -27,12 +27,12 @@ public class WorklistResponse {
         return day;
     }
 
-    public String getDays() {
-        return days;
+    public int getWork() {
+        return work;
     }
 
-    public void setDays(String days) {
-        this.days = days;
+    public void setWork(int work) {
+        this.work = work;
     }
 
     public String getWorkShift_Name() {
@@ -51,12 +51,12 @@ public class WorklistResponse {
         this.hwTime = hwTime;
     }
 
-    public String getWork() {
-        return work;
+    public int getWorkLen() {
+        return workLen;
     }
 
-    public void setWork(String work) {
-        this.work = work;
+    public void setWorkLen(int workLen) {
+        this.workLen = workLen;
     }
 
     public String getPause() {

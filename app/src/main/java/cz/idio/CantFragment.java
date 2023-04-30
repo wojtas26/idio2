@@ -3,7 +3,9 @@ package cz.idio;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +24,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-
 
 import cz.idio.api.ApiClient;
 import cz.idio.api.cant.CantAdapter;
@@ -57,13 +58,14 @@ public class CantFragment extends Fragment implements View.OnClickListener, OnOr
         mContext = context;
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         preferences = mContext.getSharedPreferences("data",Context.MODE_PRIVATE);
         login = preferences.getString("username", "");
         pwd = preferences.getString("pwdSha1", "");
         binding = FragmentCantBinding.inflate(inflater, container, false);
-        requireActivity().setTitle("Objednávka Obědů");
+        requireActivity().setTitle(mContext.getString(R.string.title_cant_fragment));
         recyclerView = binding.recyclerView;
         mSpinner = binding.menuSpinner;
         adapter = new CantAdapter(mContext, this);
@@ -74,7 +76,7 @@ public class CantFragment extends Fragment implements View.OnClickListener, OnOr
         cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
         currentDate = cal.getTime();
         String formattedDate = sdf.format(currentDate);
-        textDate.setText("Jídelní lístek od " + formattedDate);
+        textDate.setText(mContext.getString(R.string.date_cant_fragment)+ " " + formattedDate);
         btnBack = binding.buttonBack;
         btnActual = binding.btnActual;
         btnNext = binding.btnNext;
@@ -120,9 +122,10 @@ public class CantFragment extends Fragment implements View.OnClickListener, OnOr
         binding = null;
     }
 
+    @SuppressLint("SetTextI18n")
     private void updateDateLabel() {
         String formattedDate = sdf.format(currentDate);
-        textDate.setText("Jídelní lístek od " + formattedDate);
+        textDate.setText(mContext.getString(R.string.date_cant_fragment)+ " " + formattedDate);
     }
 
 
@@ -209,7 +212,7 @@ public class CantFragment extends Fragment implements View.OnClickListener, OnOr
     }else if (day.getState()==4){
            String mod = "Cant";
            String cmd = "AddDelMenu";
-           String complogin = " ";
+           String complogin = "";
            String cantMenu_Id = "-"+day.getCantMenuItems().get(1).getCantMenuId();
            String pos = String.valueOf(day.getCantMenuItems().get(1).getPos());
            ApiService apiService = ApiClient.getClient().create(ApiService.class);
@@ -229,29 +232,60 @@ public class CantFragment extends Fragment implements View.OnClickListener, OnOr
 
                 }
             });
-        }
+        }else if (day.getState()==2){
+           String mod = "Cant";
+           String cmd = "GetOrder";
+           String complogin = "";
+           String cantMenu_Id = "-"+day.getCantMenuItems().get(1).getCantMenuId();
+           String pos = String.valueOf(day.getCantMenuItems().get(1).getPos());
+           ApiService apiService = ApiClient.getClient().create(ApiService.class);
+           Call<CantResponse> call = apiService.getAddDelMenu(mod, cmd, complogin, login, pwd, cantMenu_Id, pos);
+           call.enqueue(new Callback<CantResponse>() {
+               @SuppressLint("NotifyDataSetChanged")
+               @Override
+               public void onResponse(Call<CantResponse> call, Response<CantResponse> response) {
+                   CantResponse addDelMenuResponse = response.body();
+                   int status = addDelMenuResponse.getCantStatus();
+                   setOrderButtonText(day, status);
+                   adapter.notifyDataSetChanged();
+               }
+
+               @Override
+               public void onFailure(Call<CantResponse> call, Throwable t) {
+
+               }
+           });
+       }
 
     }
-    @SuppressLint("NotifyDataSetChanged")
+
     public void setOrderButtonText(Day day, int status) {
         Button orderButton = day.getOrderButton();
         switch (status) {
             case 1:
-
                 if (orderButton != null) {
                     day.setState(4);
-                    orderButton.setText("zrušit objednávku");
+                    orderButton.setText(R.string.btn_label_cantel);
                     orderButton.setEnabled(true);
-                    orderButton.setTextColor(ContextCompat.getColor(getContext(), R.color.button_background_color));
+                    // Získání ikony z vašich zdrojů
+                    Drawable icon = ContextCompat.getDrawable(mContext, android.R.drawable.checkbox_on_background);
+                    // Nastavení ikony nalevo od textu
+                    if (icon != null) {
+                        icon.setBounds(0, 0, icon.getIntrinsicWidth(), icon.getIntrinsicHeight());
+                        orderButton.setCompoundDrawables(icon, null, null, null);
+                    }
+                    // Nastavení mezery mezi ikonou a textem
+                    orderButton.setCompoundDrawablePadding((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics()));
+                    //orderButton.setTextColor(ContextCompat.getColor(getContext(), R.color.button_background_color));
                 }
-                Toast.makeText(getContext(), "Objednáno", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), R.string.toast_label_order, Toast.LENGTH_SHORT).show();
                 break;
             case 2:
                 orderButton.setText("Na burze");
                 // orderButton.setBackgroundResource(R.drawable.button_background_burza);
                 break;
             case 3:
-                Toast.makeText(getContext(), "Objednávky již byly uzavřeny", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), R.string.toast_label_order1, Toast.LENGTH_SHORT).show();
                 break;
             case 4:
                 Toast.makeText(getContext(), "Více objednávek v této sekci nelze uskutečnit", Toast.LENGTH_SHORT).show();
@@ -272,7 +306,7 @@ public class CantFragment extends Fragment implements View.OnClickListener, OnOr
 
                 if (orderButton != null) {
                     day.setState(3);
-                    orderButton.setText("objednat");
+                    orderButton.setText(R.string.btn_order_label);
                     orderButton.setEnabled(true);
                     orderButton.setTextColor(ContextCompat.getColor(getContext(), R.color.white));
                 }
@@ -280,7 +314,7 @@ public class CantFragment extends Fragment implements View.OnClickListener, OnOr
                 // orderButton.setBackgroundResource(R.color.button_background_color);
                 break;
         }
-        adapter.notifyDataSetChanged();
+        adapter.getItemId(status);
     }
 }
 

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -7,7 +8,7 @@
         android:id="@+id/dayTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Monday"
+        android:text=""
         android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
     <TextView
@@ -15,16 +16,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/dayTextView"
-        android:text="1. Holandský řízek, bramborová kaše, kompot"
+        android:text=""
         android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
     <Button
+        style="@style/Widget.Material3.Button.Icon"
         android:id="@+id/orderButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/foodSpinner"
-        android:text="@string/order" />
-
-
-
+        android:layout_below="@id/foodSpinner" />
 </RelativeLayout>

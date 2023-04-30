@@ -2,64 +2,58 @@ package cz.idio.api.cant;
 
 
 
-import static android.app.PendingIntent.getActivity;
-import static androidx.core.content.ContentProviderCompat.requireContext;
-import static java.security.AccessController.getContext;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
+
 
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import cz.idio.CantFragment;
 import cz.idio.R;
-import cz.idio.api.ApiClient;
 import cz.idio.api.response.CantResponse;
 import cz.idio.api.response.Day;
-import cz.idio.api.response.MenuItemFood;
 import cz.idio.api.response.Vend;
-import cz.idio.model.ApiService;
 import cz.idio.model.OnOrderButtonClickListener;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+
 
 
 public class CantAdapter extends RecyclerView.Adapter<CantAdapter.ViewHolder> {
     public List<Vend> mVends;
-    Day vend;
+    static Day vend;
     CantResponse cantResponse;
     private final LayoutInflater mInflater;
     Context mContext;
-    private List<Day> mday;
+    private static List<Day> mday;
     private   String dayNameFood;
-    private OnOrderButtonClickListener mOrderButtonClickListener;
-    public CantAdapter(Context context,OnOrderButtonClickListener listener) {
+    private static OnOrderButtonClickListener mOrderButtonClickListener;
+    public CantAdapter(Context context, OnOrderButtonClickListener listener) {
         mInflater = LayoutInflater.from(context);
         mVends = new ArrayList<>();
         cantResponse = new CantResponse();
         mContext = context;
         mOrderButtonClickListener = listener;
+        setHasStableIds(true);
     }
 
     @Override
     public ViewHolder onCreateViewHolder( ViewGroup parent, int viewType) {
         View itemView = mInflater.inflate(R.layout.cant_card, parent, false);
-        return new ViewHolder(itemView);
+        ViewHolder vh = new ViewHolder(itemView, mOrderButtonClickListener);
+        return vh;
     }
 
     @Override
@@ -67,7 +61,10 @@ public class CantAdapter extends RecyclerView.Adapter<CantAdapter.ViewHolder> {
          vend =mday.get(position);
         String dayName = vend.getDay();
         holder.dayTextView.setText(dayName);
+        holder.orderButton.setPressed(false);
+        holder.orderButton.setSelected(false);
 
+        Log.d("CantAdapter", "Binding position: " + position);
         if (!vend.getCantMenuItems().isEmpty()) {
             if (vend.getCantMenuItems().size() >= 2) {
                 dayNameFood = vend.getCantMenuItems().get(1).getNameFood();
@@ -84,40 +81,49 @@ public class CantAdapter extends RecyclerView.Adapter<CantAdapter.ViewHolder> {
 
 
         int state =vend.getState();
+        holder.orderButton.setTag(state);
         switch (state) {
             case 1:
+                Log.d("CantAdapter", "State 1 at position: " + position);
                 holder.orderButton.setText("žádná nabídka");
                 holder.orderButton.setEnabled(false);
+                holder.orderButton.setCompoundDrawables(null, null, null, null);
                 break;
             case 2:
+                Log.d("CantAdapter", "State 2 at position: " + position);
                 holder.orderButton.setText("objednávka ukončena");
                 holder.orderButton.setEnabled(false);
                 break;
             case 3:
+                Log.d("CantAdapter", "State 3 at position: " + position);
                 holder.orderButton.setText("objednat");
                 holder.orderButton.setEnabled(true);
-               holder.orderButton.setTextColor(ContextCompat.getColor(mContext, R.color.white));
+               //holder.orderButton.setTextColor(ContextCompat.getColor(mContext, R.color.white));
+                holder.orderButton.setCompoundDrawables(null, null, null, null);
                 break;
             case 4:
-                holder.orderButton.setText("zrušit objednávku");
+                Log.d("CantAdapter", "State 4 at position: " + position);
                 holder.orderButton.setEnabled(true);
-                holder.orderButton.setTextColor(ContextCompat.getColor(mContext, R.color.button_background_color));
+                holder.orderButton.setText(R.string.btn_label_cantel);
+                // Získání ikony z vašich zdrojů
+                Drawable icon = ContextCompat.getDrawable(mContext, android.R.drawable.checkbox_on_background);
+                // Nastavení ikony nalevo od textu
+                if (icon != null) {
+                    icon.setBounds(0, 0, icon.getIntrinsicWidth(), icon.getIntrinsicHeight());
+                    holder.orderButton.setCompoundDrawables(icon, null, null, null);
+                }
+                // Nastavení mezery mezi ikonou a textem
+                holder.orderButton.setCompoundDrawablePadding((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5, mContext.getResources().getDisplayMetrics()));
+                //     orderButton.setTextColor(ContextCompat.getColor(getContext(), R.color.button_background_color));
 
                 break;
             default:
+                Log.d("CantAdapter", "State default at position: " + position);
                 holder.orderButton.setEnabled(true);
                 break;
         }
         vend.setOrderButton(holder.orderButton);
-        holder.orderButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mOrderButtonClickListener != null) {
-                    mOrderButtonClickListener.onOrderButtonClick(position);
 
-                }
-            }
-        });
     }
 
     @Override
@@ -155,13 +161,41 @@ public class CantAdapter extends RecyclerView.Adapter<CantAdapter.ViewHolder> {
         public final Button orderButton;
 
 
-        public ViewHolder(View itemView) {
+        public ViewHolder(View itemView, OnOrderButtonClickListener listener) {
             super(itemView);
             dayTextView = itemView.findViewById(R.id.dayTextView);
             foodSpinner = itemView.findViewById(R.id.foodSpinner);
             orderButton = itemView.findViewById(R.id.orderButton);
+            orderButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (listener != null) {
+                        int position = getAdapterPosition();
+                        int buttonState = (int) view.getTag();
+                        if (position != RecyclerView.NO_POSITION) {
+                            Log.d("CantAdapter", "Clicked position: " + position + ", button state: " + buttonState);
+                            listener.onOrderButtonClick(position);
+                        }
+                    }
+                }
+            });
+
+
+
+
+
+
+
         }
-
-
     }
+    @Override
+    public long getItemId(int position) {
+        if (position >= 0 && position < mday.size()) {
+            return mday.get(position).hashCode();
+        } else {
+            return RecyclerView.NO_ID;
+        }
+    }
+
+
 }
