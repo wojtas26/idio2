@@ -97,6 +97,7 @@ public class CantFragment extends Fragment implements View.OnClickListener, OnOr
         mSpinner.setAdapter(spinnerAdapter);
 
         mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 // Retrieve the Vend name from the selected item
@@ -105,7 +106,9 @@ public class CantFragment extends Fragment implements View.OnClickListener, OnOr
                 // Fetch data for selected Vend
                 CantAsyncTask task = new CantAsyncTask(requireContext(), adapter);
                 task.execute("Cant", "GetVend", " ", login, pwd, sdfTask.format(currentDate), selectedVend);
-            }
+                adapter.notifyDataSetChanged();
+           }
+
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -129,7 +132,8 @@ public class CantFragment extends Fragment implements View.OnClickListener, OnOr
     }
 
 
-    @SuppressLint("NonConstantResourceId")
+
+    @SuppressLint("NotifyDataSetChanged")
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.buttonBack:
@@ -152,7 +156,7 @@ public class CantFragment extends Fragment implements View.OnClickListener, OnOr
         // Fetch data for selected Vend and new date
         CantAsyncTask task = new CantAsyncTask(requireContext(), adapter);
         task.execute("Cant", "GetVend", " ", login, pwd, sdfTask.format(currentDate), selectedVend);
-
+        adapter.notifyDataSetChanged();
 
     }
 
@@ -308,7 +312,7 @@ public class CantFragment extends Fragment implements View.OnClickListener, OnOr
                     day.setState(3);
                     orderButton.setText(R.string.btn_order_label);
                     orderButton.setEnabled(true);
-                    orderButton.setTextColor(ContextCompat.getColor(getContext(), R.color.white));
+                    //orderButton.setTextColor(ContextCompat.getColor(getContext(), R.color.white));
                 }
                 Toast.makeText(getContext(), "Položka byla odebrána z objednávky", Toast.LENGTH_SHORT).show();
                 // orderButton.setBackgroundResource(R.color.button_background_color);

@@ -34,7 +34,8 @@
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:progress="0" />
+            android:progress="0"
+            app:indicatorInset="20dp"/>
         <LinearLayout
             android:id="@+id/hw_time_container"
             android:layout_width="match_parent"

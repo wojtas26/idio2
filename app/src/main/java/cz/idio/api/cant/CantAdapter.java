@@ -5,7 +5,6 @@ package cz.idio.api.cant;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.util.TypedValue;
@@ -27,6 +26,7 @@ import cz.idio.R;
 import cz.idio.api.response.CantResponse;
 import cz.idio.api.response.Day;
 import cz.idio.api.response.Vend;
+import cz.idio.databinding.CantCardBinding;
 import cz.idio.model.OnOrderButtonClickListener;
 
 
@@ -61,9 +61,6 @@ public class CantAdapter extends RecyclerView.Adapter<CantAdapter.ViewHolder> {
          vend =mday.get(position);
         String dayName = vend.getDay();
         holder.dayTextView.setText(dayName);
-        holder.orderButton.setPressed(false);
-        holder.orderButton.setSelected(false);
-
         Log.d("CantAdapter", "Binding position: " + position);
         if (!vend.getCantMenuItems().isEmpty()) {
             if (vend.getCantMenuItems().size() >= 2) {
@@ -93,6 +90,7 @@ public class CantAdapter extends RecyclerView.Adapter<CantAdapter.ViewHolder> {
                 Log.d("CantAdapter", "State 2 at position: " + position);
                 holder.orderButton.setText("objednávka ukončena");
                 holder.orderButton.setEnabled(false);
+                holder.orderButton.setCompoundDrawables(null, null, null, null);
                 break;
             case 3:
                 Log.d("CantAdapter", "State 3 at position: " + position);
@@ -114,7 +112,7 @@ public class CantAdapter extends RecyclerView.Adapter<CantAdapter.ViewHolder> {
                 }
                 // Nastavení mezery mezi ikonou a textem
                 holder.orderButton.setCompoundDrawablePadding((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5, mContext.getResources().getDisplayMetrics()));
-                //     orderButton.setTextColor(ContextCompat.getColor(getContext(), R.color.button_background_color));
+                holder.orderButton.setTextColor(ContextCompat.getColor(mContext, R.color.button_background_color));
 
                 break;
             default:
@@ -134,7 +132,6 @@ public class CantAdapter extends RecyclerView.Adapter<CantAdapter.ViewHolder> {
         return mday.size();
     }
 
-
     @SuppressLint("NotifyDataSetChanged")
     public void setVends(List<Vend> mDay) {
          mVends = mDay;
@@ -147,7 +144,7 @@ public class CantAdapter extends RecyclerView.Adapter<CantAdapter.ViewHolder> {
     }
 
     public void setOnOrderButtonClickListener(CantFragment cantFragment) {
-        mOrderButtonClickListener = (OnOrderButtonClickListener) cantFragment;
+        mOrderButtonClickListener = cantFragment;
 
     }
 

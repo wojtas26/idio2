@@ -8,20 +8,17 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.PopupMenu;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import cz.idio.api.TempDataHolder;
 import cz.idio.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
     private static final String PREFS_NAME = "data";
-    private AppBarConfiguration appBarConfiguration;
     private ActivityMainBinding binding;
 
     @SuppressLint("NonConstantResourceId")
@@ -39,31 +36,27 @@ public class MainActivity extends AppCompatActivity {
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-      //  setSupportActionBar(binding.toolbar);
-
-        FloatingActionButton fab = binding.fab;
-        fab.setOnClickListener(view -> {
-            PopupMenu popup = new PopupMenu(MainActivity.this, fab);
-            popup.inflate(R.menu.menu_fab);
-            popup.setOnMenuItemClickListener(item -> {
+        replaceFragment(new FirstFragment());
+        BottomNavigationView fab = binding.bottomNavigationView;
+        fab.setOnItemSelectedListener(item -> {
                 // Handle menu item click events
                 switch (item.getItemId()) {
-                    case R.id.menu_option1:
-                        binding.fab.getPointerIcon();
-                        getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_main, new FirstFragment()).commit();
-                        return true;
-                    case R.id.menu_option2:
-                        getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_main, new CantFragment()).commit();
-                        return true;
-                    case R.id.menu_option3:
+                    case R.id.menu_attendance:
+                        replaceFragment(new FirstFragment());
+                        break;
+                    case R.id.menu_catering:
+                        replaceFragment(new CantFragment());
+                        break;
+                    case R.id.menu_setting:
                         // Handle option 3 click
-                        return true;
-                    default:
-                        return false;
+                        break;
+                    case R.id.menu_info:
+                        // Handle option 3 click
+                        break;
+
                 }
+            return true;
             });
-            popup.show();
-        });
     }
 
 
@@ -77,11 +70,10 @@ public class MainActivity extends AppCompatActivity {
         return value != null ;
     }
 
-    @Override
-    public boolean onSupportNavigateUp() {
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-        return NavigationUI.navigateUp(navController, appBarConfiguration)
-                || super.onSupportNavigateUp();
-    }
-
+private void replaceFragment(Fragment fragment){
+    FragmentManager fragmentManager = getSupportFragmentManager();
+    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+    fragmentTransaction.replace(R.id.frameLayout2,fragment);
+    fragmentTransaction.commit();
+}
 }

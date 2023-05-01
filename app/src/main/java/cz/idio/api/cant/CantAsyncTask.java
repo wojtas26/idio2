@@ -117,5 +117,6 @@ public class CantAsyncTask extends AsyncTask<String, Void, List<Vend>> {
         if (mProgressDialog != null && mProgressDialog.isShowing()) {
             mProgressDialog.dismiss();
         }
+        mAdapter.notifyDataSetChanged();
     }
 }
