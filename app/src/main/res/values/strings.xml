@@ -44,6 +44,12 @@
         <item id="5">Sobota</item>
         <item id="6">Neděle</item>
     </string-array>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_setting_fragment">Nastavení</string>
+    <string name="vydejnaSetLbl">Nastavení výchozí výdejny: </string>
+    <string name="homeSet">výchozí obrazovka: </string>
+    <string name="antRadioButton">Docházka</string>
+    <string name="cantRadioButton">Stravování</string>
+    <string name="savebutton">Uložit všechna nastavení</string>
+    <string name="url_adresa_serveru">URL Adresa Serveru:</string>
+    <string name="zadejte_url_serveru">Zadejte URL serveru:</string>
 </resources>

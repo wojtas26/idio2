@@ -1,6 +1,8 @@
 package cz.idio;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -26,14 +28,17 @@ import retrofit2.Response;
 public class LoginActivity extends AppCompatActivity {
     private EditText mUsernameEditText;
     private EditText mPasswordEditText;
+    private EditText mUrlEditText;
     private CheckBox autoLog;
     private Button mLoginButton;
    private String username;
     private String password;
+    private String url;
     private String pwdSha1;
     private boolean autoLogin;
    private int personId;
    private SharedPreferences preferences;
+
 
 
 
@@ -45,16 +50,19 @@ public class LoginActivity extends AppCompatActivity {
         preferences = mContext.getSharedPreferences("data",Context.MODE_PRIVATE);
         mUsernameEditText = findViewById(R.id.editTextLogin);
         mPasswordEditText = findViewById(R.id.editTextTextPwd);
+        mUrlEditText = findViewById(R.id.editTextUrl);
         autoLog = findViewById(R.id.checkBox);
         mLoginButton = findViewById(R.id.Login);
         mUsernameEditText.setText(preferences.getString("username", ""));
         mPasswordEditText.setText(preferences.getString("password", ""));
+        mUrlEditText.setText(preferences.getString("url", ""));
         autoLogin = preferences.getBoolean("autoLogin",false);
         if (mLoginButton != null) {
             mLoginButton.setOnClickListener(v -> {
                 boolean isChecked = autoLog.isChecked();
                 username = mUsernameEditText.getText().toString();
                 password = mPasswordEditText.getText().toString();
+                url = mUrlEditText.getText().toString();
                 if (!TextUtils.isEmpty(username) && !TextUtils.isEmpty(password)) {
                     try {
                         pwdSha1 = StringEncryption.SHA1(password);
@@ -64,7 +72,7 @@ public class LoginActivity extends AppCompatActivity {
                     }
 
 
-                    ApiService apiService = ApiClient.getClient().create(ApiService.class);
+                    ApiService apiService = ApiClient.getClient(mContext).create(ApiService.class);
                     Call<LoginResponse> call = apiService.login("Login","Login",username, pwdSha1);
                     call.enqueue(new Callback<LoginResponse>() {
                         @Override
@@ -77,6 +85,7 @@ public class LoginActivity extends AppCompatActivity {
                                 editor.putString("pwdSha1", pwdSha1);
                                 editor.putString("password",password);
                                 editor.putString("personId", String.valueOf(personId));
+                                editor.putString("url", url);
                                 editor.putBoolean("auto_login",isChecked);
                                 editor.apply();
                                 Toast.makeText(mContext , "Přihlášeni proběhlo úspěšně", Toast.LENGTH_SHORT).show();

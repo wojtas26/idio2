@@ -61,7 +61,7 @@ public class CantAsyncTask extends AsyncTask<String, Void, List<Vend>> {
 
 
         try {
-            ApiService apiService = ApiClient.getClient().create(ApiService.class);
+            ApiService apiService = ApiClient.getClient(mContext).create(ApiService.class);
             Response<CantResponse> response = apiService.getCantData(mod, cmd, complogin, login, pwd, date).execute();
 
             if (response.isSuccessful() && response.body() != null) {

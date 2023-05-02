@@ -95,13 +95,28 @@ public class CantFragment extends Fragment implements View.OnClickListener, OnOr
         );
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSpinner.setAdapter(spinnerAdapter);
+        int savedMenuId = preferences.getInt("vydejna", -1);
+        int[] menuIds = {4, 2, 3, 1, 5};
+        int savedMenuPosition = -1;
+        for (int i = 0; i < menuIds.length; i++) {
+            if (menuIds[i] == savedMenuId) {
+                savedMenuPosition = i;
+                break;
+            }
+        }
 
+        if (savedMenuPosition != -1) {
+            mSpinner.setSelection(savedMenuPosition);
+        }
         mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                // Retrieve the Vend name from the selected item
+              
+                    // Retrieve the Vend name from the selected item
                 String selectedVend = parent.getItemAtPosition(position).toString();
+                
+
 
                 // Fetch data for selected Vend
                 CantAsyncTask task = new CantAsyncTask(requireContext(), adapter);
@@ -195,7 +210,7 @@ public class CantFragment extends Fragment implements View.OnClickListener, OnOr
            String complogin = " ";
         String cantMenu_Id = day.getCantMenuItems().get(1).getCantMenuId();
         String pos = String.valueOf(day.getCantMenuItems().get(1).getPos());
-        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+        ApiService apiService = ApiClient.getClient(mContext).create(ApiService.class);
         Call<CantResponse> call = apiService.getAddDelMenu(mod, cmd, complogin, login, pwd, cantMenu_Id, pos);
         call.enqueue(new Callback<CantResponse>() {
             @SuppressLint("NotifyDataSetChanged")
@@ -219,7 +234,7 @@ public class CantFragment extends Fragment implements View.OnClickListener, OnOr
            String complogin = "";
            String cantMenu_Id = "-"+day.getCantMenuItems().get(1).getCantMenuId();
            String pos = String.valueOf(day.getCantMenuItems().get(1).getPos());
-           ApiService apiService = ApiClient.getClient().create(ApiService.class);
+           ApiService apiService = ApiClient.getClient(mContext).create(ApiService.class);
            Call<CantResponse> call = apiService.getAddDelMenu(mod, cmd, complogin, login, pwd, cantMenu_Id, pos);
            call.enqueue(new Callback<CantResponse>() {
                 @SuppressLint("NotifyDataSetChanged")
@@ -242,7 +257,7 @@ public class CantFragment extends Fragment implements View.OnClickListener, OnOr
            String complogin = "";
            String cantMenu_Id = "-"+day.getCantMenuItems().get(1).getCantMenuId();
            String pos = String.valueOf(day.getCantMenuItems().get(1).getPos());
-           ApiService apiService = ApiClient.getClient().create(ApiService.class);
+           ApiService apiService = ApiClient.getClient(mContext).create(ApiService.class);
            Call<CantResponse> call = apiService.getAddDelMenu(mod, cmd, complogin, login, pwd, cantMenu_Id, pos);
            call.enqueue(new Callback<CantResponse>() {
                @SuppressLint("NotifyDataSetChanged")

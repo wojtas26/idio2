@@ -110,7 +110,7 @@ public class FirstFragment extends Fragment {
         String mod = "WorkList";
         String cmd = "GetPerson";
         String complogin = " ";
-        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+        ApiService apiService = ApiClient.getClient(mContext).create(ApiService.class);
         String login = preferences.getString("username", "");
         String pwd = preferences.getString("pwdSha1", "");
         int id = Integer.parseInt(preferences.getString("personId", ""));

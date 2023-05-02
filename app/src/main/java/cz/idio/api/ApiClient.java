@@ -1,5 +1,10 @@
 package cz.idio.api;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
+import androidx.activity.result.contract.ActivityResultContracts;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -12,24 +17,26 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class ApiClient {
-    private static final String BASE_URL = "http://remote.zdsloupnice.cz/";
     private static Retrofit retrofit = null;
-    public static Retrofit getClient() {
+
+    public static Retrofit getClient(Context context) {
         if (retrofit == null) {
+            SharedPreferences preferences = context.getSharedPreferences("data", Context.MODE_PRIVATE);
+            String customUrl = preferences.getString("url", "");
+            String BASE_URL = customUrl.isEmpty() ? "http://remote.zdsloupnice.cz/" : customUrl;
+
             HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
             loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
-            // Přidání kódu pro nastavení Gson na přísnější režim
             Gson gson = new GsonBuilder()
                     .setLenient()
                     .create();
 
-            // Vytvořte OkHttpClient s nastavením časového limitu a přidáním loggingInterceptor
             OkHttpClient client = new OkHttpClient.Builder()
                     .addInterceptor(loggingInterceptor)
-                    .connectTimeout(30, TimeUnit.SECONDS) // Nastavte časový limit pro připojení
-                    .readTimeout(30, TimeUnit.SECONDS) // Nastavte časový limit pro čtení dat
-                    .writeTimeout(30, TimeUnit.SECONDS) // Nastavte časový limit pro zápis dat
+                    .connectTimeout(30, TimeUnit.SECONDS)
+                    .readTimeout(30, TimeUnit.SECONDS)
+                    .writeTimeout(30, TimeUnit.SECONDS)
                     .build();
 
             retrofit = new Retrofit.Builder()
