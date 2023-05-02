@@ -112,7 +112,7 @@ public class CantAdapter extends RecyclerView.Adapter<CantAdapter.ViewHolder> {
                 }
                 // Nastavení mezery mezi ikonou a textem
                 holder.orderButton.setCompoundDrawablePadding((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5, mContext.getResources().getDisplayMetrics()));
-                holder.orderButton.setTextColor(ContextCompat.getColor(mContext, R.color.button_background_color));
+              //  holder.orderButton.setTextColor(ContextCompat.getColor(mContext, R.color.button_background_color));
 
                 break;
             default:

@@ -48,10 +48,10 @@ public class MainActivity extends AppCompatActivity {
                         replaceFragment(new CantFragment());
                         break;
                     case R.id.menu_setting:
-                        // Handle option 3 click
+                        replaceFragment(new SettingFragment());
                         break;
                     case R.id.menu_info:
-                        // Handle option 3 click
+                        replaceFragment(new InfoFragment());
                         break;
 
                 }

@@ -28,7 +28,6 @@
     <string name="autoLog">Automaticky se přihlásit</string>
 
 
-
     <string-array name="menu_items">
         <item id="4">Jídelna Řeznictví</item>
         <item id="2">Výdejna Dolní Sloupnice</item>
@@ -45,4 +44,6 @@
         <item id="5">Sobota</item>
         <item id="6">Neděle</item>
     </string-array>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
