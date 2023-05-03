@@ -18,6 +18,14 @@ public class LoginResponse {
 
     // Gettery a settery pro všechny proměnné
 
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
     public String getPersonName() {
         return personName;
     }

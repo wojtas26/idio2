@@ -1,5 +1,7 @@
 package cz.idio;
 
+import static android.content.ContentValues.TAG;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
@@ -8,6 +10,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -79,21 +82,26 @@ public class LoginActivity extends AppCompatActivity {
                         public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                             if (response.isSuccessful()) {
                                 LoginResponse loginResponse= response.body();
-                                personId=loginResponse.getPersonId();
-                                SharedPreferences.Editor editor = preferences.edit();
-                                editor.putString("username", username);
-                                editor.putString("pwdSha1", pwdSha1);
-                                editor.putString("password",password);
-                                editor.putString("personId", String.valueOf(personId));
-                                editor.putString("url", url);
-                                editor.putBoolean("auto_login",isChecked);
-                                editor.apply();
-                                Toast.makeText(mContext , "Přihlášeni proběhlo úspěšně", Toast.LENGTH_SHORT).show();
-                                TempDataHolder.getInstance().set("temporary_key", "temporary_value");
-                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                startActivity(intent);
-                            } else {
-                                Toast.makeText(mContext , "Přihlášení se nezdařilo. Zkontrolujte uživatelské jméno a heslo.", Toast.LENGTH_SHORT).show();
+                                int status = loginResponse.getStatus();
+                                Log.d(TAG, "onResponse: "+ status);
+                              if (status==0){
+
+                                      personId=loginResponse.getPersonId();
+                                      SharedPreferences.Editor editor = preferences.edit();
+                                      editor.putString("username", username);
+                                      editor.putString("pwdSha1", pwdSha1);
+                                      editor.putString("password",password);
+                                      editor.putString("personId", String.valueOf(personId));
+                                      editor.putString("url", url);
+                                      editor.putBoolean("auto_login",isChecked);
+                                      editor.apply();
+                                      Toast.makeText(mContext , "Přihlášeni proběhlo úspěšně", Toast.LENGTH_SHORT).show();
+                                      TempDataHolder.getInstance().set("temporary_key", "temporary_value");
+                                      Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                      startActivity(intent);
+                              } else if (status==3) {
+                                  Toast.makeText(mContext , "Přihlášení se nezdařilo. Zkontrolujte uživatelské jméno a heslo.", Toast.LENGTH_SHORT).show();
+                              }
                             }
                         }
 
@@ -103,7 +111,7 @@ public class LoginActivity extends AppCompatActivity {
                         public void onFailure(Call<LoginResponse> call, Throwable t) {
                             // Chyba při komunikaci s API
                             t.printStackTrace();
-                            Toast.makeText(mContext , "Chyba onFailure: "+ t, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(mContext , "Přihlášení se nezdařilo onFailure: "+ t, Toast.LENGTH_SHORT).show();
                         }
                     });
 
