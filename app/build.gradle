@@ -3,15 +3,35 @@ plugins {
 }
 
 android {
+    buildTypes {
+        release {
+            // Enables code shrinking, obfuscation, and optimization for only
+            // your project's release build type.
+            minifyEnabled true
+
+            // Enables resource shrinking, which is performed by the
+            // Android Gradle plugin.
+          //  shrinkResources true
+
+            // Includes the default ProGuard rules files that are packaged with
+            // the Android Gradle plugin. To learn more, go to the section about
+            // R8 configuration files.
+            proguardFiles getDefaultProguardFile(
+                    'proguard-android-optimize.txt'),
+                    'proguard-rules.pro'
+                   }
+    }
     ndkVersion = '25.2.9519653'
     signingConfigs {
         release {
+
             storeFile file('C:\\Users\\wojta\\Documents\\mykeystore\\mykeystore1.jks')
             storePassword 'Lidl0289'
             keyAlias 'key1'
             keyPassword 'Lidl0289'
         }
     }
+
     namespace 'cz.idio'
     compileSdk 33
 
