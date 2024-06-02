@@ -34,11 +34,14 @@ public class MainActivity extends AppCompatActivity {
         }
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        replaceFragment(new FirstFragment());
+        replaceFragment(new HomeFragment());
         BottomNavigationView fab = binding.bottomNavigationView;
         fab.setOnItemSelectedListener(item -> {
                 // Handle menu item click events
                 switch (item.getItemId()) {
+                    case R.id.menu_home:
+                        replaceFragment(new HomeFragment());
+                        break;
                     case R.id.menu_attendance:
                         replaceFragment(new FirstFragment());
                         break;

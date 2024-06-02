@@ -4,6 +4,8 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
+import cz.idio.api.AddPayItem;
+
 public class WorklistResponse {
 
     @SerializedName("Day")
@@ -18,7 +20,10 @@ public class WorklistResponse {
     private String pause;
     @SerializedName("Work")
     private int work;
-
+    @SerializedName("AddPayList")
+    private List<AddPayItem> addPayList;
+    @SerializedName("CompHoliday")
+    private int compHoliday;
     public void setDay(List<DayItem> day) {
         this.day = day;
     }
@@ -66,7 +71,19 @@ public class WorklistResponse {
     public void setPause(String pause) {
         this.pause = pause;
     }
+    public List<AddPayItem> getAddPayList() {
+        return addPayList;
+    }
 
+    public void setAddPayList(List<AddPayItem> addPayList) {
+        this.addPayList = addPayList;
+    }
 
+    public int getCompHoliday() {
+        return compHoliday;
+    }
 
+    public void setCompHoliday(int compHoliday) {
+        this.compHoliday = compHoliday;
+    }
 }

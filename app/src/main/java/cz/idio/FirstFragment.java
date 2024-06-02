@@ -116,8 +116,9 @@ public class FirstFragment extends Fragment {
         int id = Integer.parseInt(preferences.getString("personId", ""));
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.DAY_OF_MONTH, 1);
-        @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-d");
         String dateday = sdf.format(calendar.getTime());
+
        // Přidejte červenou barvu pro neděle
         Collection<CalendarDay> sundays = new ArrayList<>();
 
@@ -159,7 +160,7 @@ public class FirstFragment extends Fragment {
                 WorkProgress.setProgress((int) sumWork);
                 Collection<CalendarDay> dates = new ArrayList<>();
                 Collection<CalendarDay> holidayDays = new ArrayList<>();
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-d", Locale.getDefault());
 
                 if (dayItems != null) {
                     for (DayItem dayItem : dayItems) {
@@ -199,12 +200,12 @@ public class FirstFragment extends Fragment {
             }
             @Override
             public void onFailure (@NonNull Call < WorklistResponse > call, @NonNull Throwable t){
-                Log.e(TAG, "Failed to get worklist for month: " + t.getMessage());
+                Log.e(TAG, "Failed to get worklist for month1: " + t.getMessage());
             }
         });
 
         calendarView.setOnMonthChangedListener((widget, date) -> {
-            Call<WorklistResponse> call1 = apiService.getWorklist(mod, cmd, complogin, login, pwd, id, date.getYear()+"-0"+date.getMonth()+"-01");
+            Call<WorklistResponse> call1 = apiService.getWorklist(mod, cmd, complogin, login, pwd, id, date.getYear()+"-"+date.getMonth()+"-01");
             call1.enqueue(new Callback<WorklistResponse>()
 
             {
@@ -221,7 +222,7 @@ public class FirstFragment extends Fragment {
                     WorkProgress.setProgress((int) sumWork);
                     Collection<CalendarDay> dates = new ArrayList<>();
                     Collection<CalendarDay> holidayDays = new ArrayList<>();
-                    SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                    SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-d", Locale.getDefault());
 
                     if (dayItems != null) {
                         for (DayItem dayItem : dayItems) {
@@ -229,6 +230,7 @@ public class FirstFragment extends Fragment {
                             Date date;
                             try {
                                 date = sdf1.parse(dayItem.getDay());
+                                Log.e(TAG, "Failed 1 month: " + sdf1.parse(dayItem.getDay()));
                                 Calendar calendar1 = Calendar.getInstance();
                                 calendar1.setTime(date);
                                 int year = calendar1.get(Calendar.YEAR);
@@ -261,7 +263,7 @@ public class FirstFragment extends Fragment {
                 }
                 @Override
                 public void onFailure (@NonNull Call < WorklistResponse > call1, @NonNull Throwable t){
-                    Log.e(TAG, "Failed to get worklist for month: " + t.getMessage());
+                    Log.e(TAG, "Failed to get worklist for month2: " + t.getMessage());
                 }
             });
 

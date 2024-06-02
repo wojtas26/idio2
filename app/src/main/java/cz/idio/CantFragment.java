@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -171,6 +172,8 @@ public class CantFragment extends Fragment implements View.OnClickListener, OnOr
         // Fetch data for selected Vend and new date
         CantAsyncTask task = new CantAsyncTask(requireContext(), adapter);
         task.execute("Cant", "GetVend", " ", login, pwd, sdfTask.format(currentDate), selectedVend);
+        Log.d("test","tt "+ task.toString()
+        );
         adapter.notifyDataSetChanged();
 
     }

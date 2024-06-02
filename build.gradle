@@ -1,9 +1,7 @@
 buildscript {
-    ext {
-        ndkVersion = '25.2.9519653'
-    }
+
 }
 plugins {
-    id 'com.android.application' version '8.0.1' apply false
-    id 'com.android.library' version '8.0.1' apply false
+    id 'com.android.application' version '8.3.2' apply false
+    id 'com.android.library' version '8.3.2' apply false
 }

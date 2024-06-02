@@ -177,4 +177,6 @@ public class DayItem {
     public void setWorkShiftReq(String workShiftReq) {
         this.workShiftReq = workShiftReq;
     }
+
+
 }
