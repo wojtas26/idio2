@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="month_spinner" type="id" />
+    <item name="summary_layout" type="id" />
+    <item name="total_hours" type="id" />
+    <item name="day_hours" type="id" />
+    <item name="night_hours" type="id" />
+    <item name="weekend_hours" type="id" />
+    <item name="bar_chart" type="id" />
+</resources>
