@@ -25,7 +25,6 @@ public class EmployeeFragment extends Fragment {
 
     private Context mContext;
     private EditText shiftIdEditText, noteEditText, requestTypeEditText, requestDateEditText;
-    private Button confirmShiftButton, rejectShiftButton, createRequestButton;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -43,9 +42,9 @@ public class EmployeeFragment extends Fragment {
         noteEditText = view.findViewById(R.id.noteEditText);
         requestTypeEditText = view.findViewById(R.id.requestTypeEditText);
         requestDateEditText = view.findViewById(R.id.requestDateEditText);
-        confirmShiftButton = view.findViewById(R.id.confirmShiftButton);
-        rejectShiftButton = view.findViewById(R.id.rejectShiftButton);
-        createRequestButton = view.findViewById(R.id.createRequestButton);
+        Button confirmShiftButton = view.findViewById(R.id.confirmShiftButton);
+        Button rejectShiftButton = view.findViewById(R.id.rejectShiftButton);
+        Button createRequestButton = view.findViewById(R.id.createRequestButton);
 
         // Nastavení listenerů pro tlačítka
         confirmShiftButton.setOnClickListener(v -> confirmShift());

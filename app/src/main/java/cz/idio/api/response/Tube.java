@@ -13,7 +13,7 @@ public class Tube {
     }
 
     public void setLen(int len) {
-        len = len;
+        this.len = len;
     }
 
     public String getNames() {
@@ -21,7 +21,7 @@ public class Tube {
     }
 
     public void setNames(String name) {
-        names = name;
+        this.names = names;
     }
 
 

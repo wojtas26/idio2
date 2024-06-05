@@ -67,5 +67,5 @@ public class Shift {
     public void setEmployeeId(String employeeId) {
     }
 
-    // Gettery a settery
+
 }

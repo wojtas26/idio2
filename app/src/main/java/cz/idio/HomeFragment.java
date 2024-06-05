@@ -1,5 +1,7 @@
 package cz.idio;
 
+import static android.content.ContentValues.TAG;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -27,6 +29,7 @@ import java.util.List;
 
 import cz.idio.api.ApiClient;
 import cz.idio.api.response.DayItem;
+import cz.idio.api.response.Tube;
 import cz.idio.api.response.WorklistResponse;
 import cz.idio.databinding.FragmentHomeBinding;
 import cz.idio.model.ApiService;
@@ -141,8 +144,20 @@ public class HomeFragment extends Fragment {
                     nightHours = worklistResponse.getAddPayList().stream().filter(pay -> pay.getName().equals("Práce v noci")).findFirst().map(pay -> pay.getLen() / 60f).orElse(0f);
                     weekendHours = worklistResponse.getAddPayList().stream().filter(pay -> pay.getName().equals("Práce o víkendu")).findFirst().map(pay -> pay.getLen() / 60f).orElse(0f);
                     overtimeHours = worklistResponse.getAddPayList().stream().filter(pay -> pay.getName().equals("Práce přesčas")).findFirst().map(pay -> pay.getLen() / 60f).orElse(0f);
-                    // Načtení hodin dovolené z pole Tubes
-                    holidayHours = worklistResponse.getTubes().stream().filter(tube -> tube.getNames().equals("Dovolená")).findFirst().map(tube -> tube.getLen() / 60f).orElse(0f);
+                    // Kontrola, zda `getTubes` není `null`
+                    // Kontrola, zda `getTubes` není `null`
+                    List<Tube> tubes = worklistResponse.getTubes();
+                    if (tubes != null) {
+
+                        holidayHours = tubes.stream()
+                                .filter(tube -> "Dovolená".equals(tube.getNames()))
+                                .findFirst()
+                                .map(tube -> tube.getLen() / 60f)
+                                .orElse(0f);
+                    } else {
+                        holidayHours = 0f;
+                    }
+
                     holidayCompensationHours = worklistResponse.getCompHoliday() / 60f;
 
                     // Aktualizace UI prvků s novými daty

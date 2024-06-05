@@ -52,6 +52,15 @@
             </LinearLayout>
         </ScrollView>
 
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/floatingActionButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:contentDescription="@string/menu"
+            android:focusable="true"
+            android:src="@android:drawable/ic_menu_sort_by_size" />
+
     </LinearLayout>
 
 </FrameLayout>

@@ -42,9 +42,9 @@
         android:id="@+id/summary_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:layout_below="@id/month_spinner"
         android:layout_marginTop="16dp"
+        android:orientation="vertical"
         android:padding="16dp">
 
         <TextView
@@ -59,38 +59,41 @@
             android:id="@+id/night_hours"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:text="@string/celkov_po_et_no_n_ch_hodin_0"
-            android:textSize="18sp"
-            android:layout_marginTop="8dp" />
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/weekend_hours"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:text="@string/celkov_po_et_hodin_odpracovan_ch_o_v_kendu_0"
-            android:textSize="18sp"
-            android:layout_marginTop="8dp" />
+            android:textSize="18sp" />
+
         <TextView
             android:id="@+id/overtime_hours"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:text="@string/p_es_as_0"
-            android:textSize="18sp"
-            android:layout_marginTop="8dp" />
+            android:textSize="18sp" />
+
         <TextView
             android:id="@+id/holiday_hours"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:text="@string/dovolen_0"
-            android:textSize="18sp"
-            android:layout_marginTop="8dp" />
+            android:textSize="18sp" />
+
         <TextView
             android:id="@+id/holiday_compensation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:text="@string/n_hrada_za_sv_tek_0"
-            android:textSize="18sp"
-            android:layout_marginTop="8dp" />
+            android:textSize="18sp" />
     </LinearLayout>
 
     <!-- Sloupcový graf -->

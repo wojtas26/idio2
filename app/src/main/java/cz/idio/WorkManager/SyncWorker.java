@@ -4,23 +4,22 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
-
-import java.util.List;
-
-import cz.idio.api.ApiClient;
-import cz.idio.shift.EmployeeService;
 import cz.idio.shift.Shift;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class SyncWorker extends Worker {
 
-    private Context mContext;
+    private DatabaseReference mDatabase;
 
     public SyncWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
-        this.mContext = context;
+        this.mDatabase = FirebaseDatabase.getInstance().getReference();
     }
 
     @NonNull
@@ -32,23 +31,19 @@ public class SyncWorker extends Worker {
     }
 
     private void syncData() {
-        // Příklad synchronizace směn
-        EmployeeService employeeService = ApiClient.getClient(mContext).create(EmployeeService.class);
-        Call<List<Shift>> call = employeeService.getShifts();
-        call.enqueue(new Callback<List<Shift>>() {
+        mDatabase.child("shifts").addValueEventListener(new ValueEventListener() {
             @Override
-            public void onResponse(@NonNull Call<List<Shift>> call, @NonNull Response<List<Shift>> response) {
-                if (response.isSuccessful()) {
-                    List<Shift> shifts = response.body();
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Shift shift = snapshot.getValue(Shift.class);
                     // Aktualizace lokální databáze nebo UI s novými daty
                 }
             }
 
             @Override
-            public void onFailure(@NonNull Call<List<Shift>> call, @NonNull Throwable t) {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
                 // Chyba při synchronizaci
             }
         });
     }
 }
-

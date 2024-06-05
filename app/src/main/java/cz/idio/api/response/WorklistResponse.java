@@ -24,6 +24,8 @@ public class WorklistResponse {
     private List<AddPayItem> addPayList;
     @SerializedName("CompHoliday")
     private int compHoliday;
+    @SerializedName("Tubes")
+    private List<Tube> tubes; // Přidání pole Tubes
     public void setDay(List<DayItem> day) {
         this.day = day;
     }
@@ -85,5 +87,13 @@ public class WorklistResponse {
 
     public void setCompHoliday(int compHoliday) {
         this.compHoliday = compHoliday;
+    }
+
+    public List<Tube> getTubes() {
+        return tubes;
+    }
+
+    public void setTubes(List<Tube> tubes) {
+        this.tubes = tubes;
     }
 }

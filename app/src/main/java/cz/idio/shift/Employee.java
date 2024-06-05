@@ -4,6 +4,30 @@ public class Employee {
     private String id;
     private String name;
     private String role; // "admin" nebo "employee"
+    public String getId() {
+        return id;
+    }
 
-    // Gettery a settery
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+
+
 }

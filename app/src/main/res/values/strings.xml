@@ -62,4 +62,6 @@
     <string name="celkov_p_ehled_m_s_ce">Celkový přehled měsíce</string>
     <string name="celkov_po_et_odpracovan_ch_hodin_0">Celkový počet odpracovaných hodin: 0</string>
     <string name="celkov_po_et_hodin_odpracovan_ch_o_v_kendu_0">Celkový počet hodin odpracovaných o víkendu: 0</string>
+    <string name="dovolen_0">Dovolená: 0</string>
+    <string name="menu">menu</string>
 </resources>

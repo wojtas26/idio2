@@ -56,5 +56,5 @@ public class Request {
         this.note = note;
     }
 
-    // Gettery a settery
+
 }

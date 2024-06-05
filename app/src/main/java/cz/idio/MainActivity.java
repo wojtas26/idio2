@@ -13,14 +13,17 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
+import cz.idio.WorkManager.SyncScheduler;
 import cz.idio.api.TempDataHolder;
 import cz.idio.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
     private static final String PREFS_NAME = "data";
     private ActivityMainBinding binding;
-
+    private DatabaseReference mDatabase;
     @SuppressLint("NonConstantResourceId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +35,11 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
+        // Inicializace Firebase Database
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+
+        // Spuštění synchronizace
+        SyncScheduler.scheduleSync(this);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         replaceFragment(new HomeFragment());
